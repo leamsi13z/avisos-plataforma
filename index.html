@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma de Avisos & Novedades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --primary: #6366f1;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
+      padding: 2.5rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .grid-avisos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .aviso-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .aviso-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .aviso-img-wrapper {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      overflow: hidden;
+      background-color: rgba(15, 23, 42, 0.6);
+    }
+
+    .aviso-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .aviso-card:hover .aviso-img {
+      transform: scale(1.05);
+    }
+
+    .aviso-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .aviso-fecha {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .aviso-titulo {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      line-height: 1.3;
+    }
+
+    .aviso-texto {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .aviso-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .skeleton-card {
+      height: 340px;
+      background: rgba(30, 41, 59, 0.4);
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>Tablero de Avisos</h1>
+        <p>Sincronizado en tiempo real desde Google Sheets</p>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span>Conectado</span>
+      </div>
+    </header>
+
+    <main id="avisos-container" class="grid-avisos">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </main>
+  </div>
+
+  <script>
+    // Nuevo enlace de Apps Script integrado correctamente
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxh_2fup6QVDUYLKJOHBRAPLjuP7pwcsUn7lwCSMmThTGsBBTH4ZEjnIblmJv6Cx9kX/exec';
+
+    async function cargarAvisos() {
+      const container = document.getElementById('avisos-container');
+
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Error al conectar con la API');
+        
+        const avisos = await response.json();
+        renderAvisos(avisos);
+      } catch (error) {
+        console.error('Error:', error);
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1.5rem; border-radius: 12px;">
+            <p style="color: #f87171; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Error al cargar los avisos</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Verifica la conexión o asegúrate de que tu hoja contenga datos válidos en las columnas.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderAvisos(avisos) {
+      const container = document.getElementById('avisos-container');
+      container.innerHTML = '';
+
+      if (!avisos || avisos.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted);">No hay avisos registrados por el momento.</p>';
+        return;
+      }
+
+      avisos.forEach(aviso => {
+        const card = document.createElement('article');
+        card.className = 'aviso-card';
+
+        const imageHTML = aviso.imagen 
+          ? `<div class="aviso-img-wrapper">
+               <img src="${aviso.imagen}" alt="${aviso.titulo}" class="aviso-img" loading="lazy" onError="this.parentElement.style.display='none'">
+             </div>`
+          : '';
+
+        let fechaFormateada = aviso.fecha || '';
+        if (fechaFormateada.includes('T')) {
+          fechaFormateada = fechaFormateada.split('T')[0];
+        }
+
+        card.innerHTML = `
+          ${imageHTML}
+          <div class="aviso-body">
+            <span class="aviso-fecha">📅 ${fechaFormateada}</span>
+            <h2 class="aviso-titulo">${aviso.titulo}</h2>
+            <p class="aviso-texto">${aviso.texto}</p>
+            <div class="aviso-footer">
+              <span>Actualizado desde Google Sheets</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', cargarAvisos);
+  </script>
+</body>
+</html>
